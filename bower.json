@@ -16,5 +16,17 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/bearfriend/translangular.git"
-  }
+  },
+  "ignore": [
+    "src",
+    "gulpfile.js",
+    "gulp",
+    ".editorconfig",
+    ".eslintrc",
+    ".gitignore",
+    "package.json",
+    "tsconfig.json",
+    "tslint.json",
+    "typings.json"
+  ]
 }
