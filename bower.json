@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "authors": ["Daniel Gleckler <daniel.gleckler@d2l.com>"],
+  "main": "./dist/translangular.js",
   "dependencies": {
     "restangular": "~1.5.2",
     "angular": "~1.5.0",
