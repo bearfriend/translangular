@@ -1,0 +1,11 @@
+{
+  "name": "translangular",
+  "globalDependencies": {
+    "jquery": "github:DefinitelyTyped/DefinitelyTyped/jquery/jquery.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "restangular": "github:DefinitelyTyped/DefinitelyTyped/restangular/restangular.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "angular": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular.d.ts",
+    "angular-mocks": "github:DefinitelyTyped/DefinitelyTyped/angularjs/angular-mocks.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "jasmine": "github:DefinitelyTyped/DefinitelyTyped/jasmine/jasmine.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2",
+    "karma-jasmine": "github:DefinitelyTyped/DefinitelyTyped/karma-jasmine/karma-jasmine.d.ts#bb051830df88f5a55dcf06b7fe85bf6b62cc97f2"
+  }
+}
