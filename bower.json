@@ -1,0 +1,20 @@
+{
+  "name": "translangular",
+  "version": "0.0.1",
+  "license": "MIT",
+  "authors": ["Daniel Gleckler <daniel.gleckler@d2l.com>"],
+  "dependencies": {
+    "restangular": "~1.5.2",
+    "angular": "~1.5.0",
+    "angular-i18n": "^1.5.5",
+    "angular-dynamic-locale": "^0.1.32"
+  },
+  "devDependencies": {
+    "angular-mocks": "~1.5.1",
+    "jquery": "^2.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bearfriend/translangular.git"
+  }
+}
