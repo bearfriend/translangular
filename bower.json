@@ -1,6 +1,7 @@
 {
   "name": "translangular",
-  "version": "0.0.1",
+  "version": "0.1.0",
+  "description": "A simple AngularJS module for localization",
   "license": "MIT",
   "authors": ["Daniel Gleckler <daniel.gleckler@d2l.com>"],
   "main": "./dist/translangular.js",

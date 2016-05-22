@@ -32,9 +32,9 @@ export class TranslangularProvider {
 
       this.resolved = false;
 
-      this.set = function(lang: string) {
+      this.set = (lang: string) => {
 
-        lang = lang && lang.toLowerCase();
+        if (this.resolved && this.lang == lang) { return; }
 
         if (this.supported.indexOf(lang) === -1) {
           lang = lang.split('-')[0];
@@ -43,24 +43,25 @@ export class TranslangularProvider {
           }
         }
 
-        tmhDynamicLocale.set(lang);
+        tmhDynamicLocale.set(lang.toLowerCase());
 
         this.resolved = false;
         this.promise = Restangular.oneUrl('terms', constants.baseUrl + '/assets/terms/' + lang + '.json').get();
 
-        this.promise.then(() => {
-          $rootScope.localeId = lang;
+        this.promise.then((resources) => {
           this.resolved = true;
+          this.resources = resources;
+          $rootScope.localeId = lang;
         });
 
-
-        this.terms = this.promise.$object;
+        this.lang = lang;
 
       };
 
-      this.lang = (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage));
+      let lang = (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage));
 
-      this.set(this.lang);
+      $rootScope.localeId = lang; // Prevent second filter on load.
+      this.set(lang);
 
     }
 

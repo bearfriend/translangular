@@ -81,30 +81,34 @@
 	    /** @ngInject */
 	    TranslangularProvider.prototype.$get = function (Restangular, tmhDynamicLocale, $rootScope, constants) {
 	        var Translangular = function (opts) {
+	            var _this = this;
 	            this.supported = opts.supported;
 	            this.dynamic = opts.dynamic;
 	            this.default = opts.default;
 	            this.resolved = false;
 	            this.set = function (lang) {
-	                var _this = this;
-	                lang = lang && lang.toLowerCase();
-	                if (this.supported.indexOf(lang) === -1) {
+	                if (_this.resolved && _this.lang == lang) {
+	                    return;
+	                }
+	                if (_this.supported.indexOf(lang) === -1) {
 	                    lang = lang.split('-')[0];
-	                    if (this.supported.indexOf(lang) === -1) {
-	                        lang = this.default;
+	                    if (_this.supported.indexOf(lang) === -1) {
+	                        lang = _this.default;
 	                    }
 	                }
-	                tmhDynamicLocale.set(lang);
-	                this.resolved = false;
-	                this.promise = Restangular.oneUrl('terms', constants.baseUrl + '/assets/terms/' + lang + '.json').get();
-	                this.promise.then(function () {
-	                    $rootScope.localeId = lang;
+	                tmhDynamicLocale.set(lang.toLowerCase());
+	                _this.resolved = false;
+	                _this.promise = Restangular.oneUrl('terms', constants.baseUrl + '/assets/terms/' + lang + '.json').get();
+	                _this.promise.then(function (resources) {
 	                    _this.resolved = true;
+	                    _this.resources = resources;
+	                    $rootScope.localeId = lang;
 	                });
-	                this.terms = this.promise.$object;
+	                _this.lang = lang;
 	            };
-	            this.lang = (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage));
-	            this.set(this.lang);
+	            var lang = (navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage));
+	            $rootScope.localeId = lang; // Prevent second filter on load.
+	            this.set(lang);
 	        };
 	        return new Translangular({
 	            supported: this.supported,
@@ -124,37 +128,41 @@
 
 	/** @ngInject */
 	function TranslateFilter(Translangular, $locale) {
-	    return function (str, data) {
-	        var term = Translangular.terms[str];
-	        if (!term) {
-	            console.error('Term "' + str + '" not found.');
+	    return function (str, localeId, data) {
+	        var res = Translangular.resources['$res[ ' + str + ' ]'];
+	        if (!res) {
+	            console.error('Language resource "' + str + '" not found.');
 	            return;
 	        }
+	        var resText = res['TRANSLATE'];
 	        if (data) {
-	            if (data._desc) {
-	                term = term[data._desc];
+	            if ('index' in data) {
+	                //resText = res[data['$i']] && res[data['$i']]['TRANSLATE'];
+	                resText = res[data.index]['TRANSLATE'];
 	            }
-	            else if (data._pluralize) {
-	                var pluralize = 'pluralize:' + data._pluralize;
-	                var offset = data._offset ? ', offset:' + data._offset : '';
-	                var plurals = term[pluralize + offset];
-	                term =
-	                    plurals['=' + data[data._pluralize]] // try exact match (i.e. "=1", "=2")
-	                        || plurals[$locale.pluralCat(data[data._pluralize])] // try plural category (i.e. "few", "many")
+	            if (data.plural) {
+	                var plurals = resText;
+	                var count = data.plural - data.offset;
+	                resText =
+	                    plurals['=' + count] // try exact match (i.e. "=1", "=2")
+	                        || plurals[$locale.pluralCat(count)] // try plural category (i.e. "few", "many")
 	                        || plurals.other;
 	            }
+	            if (data.select) {
+	                var selects = resText;
+	                resText = selects[data.select] || selects.other;
+	            }
 	        }
-	        // TODO: use a provider, package as module
-	        if (Translangular.dynamicLocale && (!data || !data._id)) {
-	            console.warn("Translate filter did not receive an '_id' property, and dynamicLocale is enabled. This term will not be updated if the locale is changed dynamically.");
+	        if (Translangular.dynamic && !localeId) {
+	            console.warn("Translate filter did not receive a 'this' (scope) argument, but dynamic locales are enabled. This resource will not be updated if the locale is changed dynamically.");
 	        }
-	        return term
+	        return resText
 	            .replace(/(\{.*?\})/g, function (exp) {
 	            return exp
 	                .slice(1, -1)
 	                .trim()
 	                .split('.')
-	                .reduce(function (o, i) { return o[i]; }, data);
+	                .reduce(function (o, i) { return o[i]; }, data.bindings);
 	        });
 	    };
 	}
