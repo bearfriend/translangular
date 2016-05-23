@@ -140,9 +140,9 @@
 	                //resText = res[data['$i']] && res[data['$i']]['TRANSLATE'];
 	                resText = res[data.index]['TRANSLATE'];
 	            }
-	            if (data.plural) {
+	            if ('plural' in data) {
 	                var plurals = resText;
-	                var count = data.plural - data.offset;
+	                var count = (data.plural || 0) - (data.offset || 0);
 	                resText =
 	                    plurals['=' + count] // try exact match (i.e. "=1", "=2")
 	                        || plurals[$locale.pluralCat(count)] // try plural category (i.e. "few", "many")
